@@ -1,43 +1,114 @@
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet, Text } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Animated,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // Import AsyncStorage
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [showLogin, setShowLogin] = useState(false);
+  const slideAnimation = new Animated.Value(0);
   const navigation = useNavigation();
 
-  const handleLogin = async () => {
-    // Example authentication (replace with real logic)
-    if (username === "user" && password === "pass") {
-      // Save token to local storage
-      await AsyncStorage.setItem("token", "exampleToken");
-      navigation.navigate("(tabs)"); // Navigate to (tabs) route
-    } else {
-      setError("Invalid username or password");
-    }
+  const handleShowLogin = () => {
+    setShowLogin(true);
+    Animated.timing(slideAnimation, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const slideInterpolate = slideAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["100%", "0%"],
+  });
+
+  const handleLogin = () => {
+    // Add any login logic here (e.g., form validation, API calls)
+    // Then navigate to the home screen
+    navigation.navigate("(tabs)"); // Assuming 'Home' is the name of your root route
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Button title="Login" onPress={handleLogin} />
+      {!showLogin ? (
+        <View style={styles.splashScreen}>
+          <Image
+            source={require("../assets/kahe-image.png")}
+            style={styles.backgroundImage}
+          />
+          <View style={styles.overlay} />
+          <View style={styles.logoContainer}>
+            <Text style={styles.logoText}>KAHE ALUMNI PORTAL</Text>
+            <Text style={styles.subLogoText}>Build Your Network</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.getStartedButton}
+            onPress={handleShowLogin}
+          >
+            <Text style={styles.getStartedButtonText}>Get Started</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <Animated.View
+          style={[
+            styles.loginContainer,
+            { transform: [{ translateY: slideAnimation }] },
+          ]}
+        >
+          <Image
+            source={require("../assets/kahe-image.png")}
+            style={styles.backgroundImage}
+          />
+          <View style={styles.overlay} />
+          <View style={styles.loginForm}>
+            <Text style={styles.loginTitle}>Login</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Email Address"
+              placeholderTextColor="#999"
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              placeholderTextColor="#999"
+              secureTextEntry
+            />
+            <TouchableOpacity style={styles.forgotPassword}>
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+              <Text style={styles.loginButtonText}>Login</Text>
+            </TouchableOpacity>
+            <View style={styles.socialLoginContainer}>
+              <Text style={styles.socialLoginText}>Or login with</Text>
+              <View style={styles.socialButtons}>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialButtonText}>G</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialButtonText}>ln</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.socialButton}>
+                  <Text style={styles.socialButtonText}>f</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.signupContainer}>
+              <Text style={styles.signupText}>Don't have an account? </Text>
+              <TouchableOpacity>
+                <Text style={styles.signupLink}>Signup</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Animated.View>
+      )}
     </View>
   );
 };
@@ -45,25 +116,117 @@ const Login = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  splashScreen: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
   },
-  title: {
+  backgroundImage: {
+    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  logoContainer: {
+    alignItems: "center",
+  },
+  logoText: {
+    fontSize: 36,
+    fontWeight: "bold",
+    color: "white",
+  },
+  subLogoText: {
+    fontSize: 18,
+    color: "white",
+  },
+  getStartedButton: {
+    backgroundColor: "#4CAF50",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+    marginTop: 20,
+  },
+  getStartedButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  loginContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loginForm: {
+    width: "80%",
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 10,
+    padding: 20,
+  },
+  loginTitle: {
     fontSize: 24,
-    marginBottom: 16,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: "center",
   },
   input: {
-    width: "100%",
-    padding: 12,
-    marginBottom: 16,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 4,
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
-  error: {
-    color: "red",
-    marginBottom: 16,
+  forgotPassword: {
+    alignSelf: "flex-end",
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: "#4CAF50",
+  },
+  loginButton: {
+    backgroundColor: "#4CAF50",
+    borderRadius: 5,
+    padding: 10,
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  socialLoginContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  socialLoginText: {
+    marginBottom: 10,
+  },
+  socialButtons: {
+    flexDirection: "row",
+  },
+  socialButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ddd",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 5,
+  },
+  socialButtonText: {
+    fontSize: 16,
+  },
+  signupContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 20,
+  },
+  signupText: {
+    color: "#333",
+  },
+  signupLink: {
+    color: "#4CAF50",
+    fontWeight: "bold",
   },
 });
 

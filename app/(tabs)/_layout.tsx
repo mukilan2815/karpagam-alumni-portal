@@ -1,11 +1,10 @@
 import { Tabs } from "expo-router";
-import React from "react";
-import { TabBarIcon } from "@/components/navigation/TabBarIcon";
+import { Ionicons } from "@expo/vector-icons";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const colorScheme: "light" | "dark" = useColorScheme();
 
   return (
     <Tabs
@@ -19,53 +18,37 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
+            <Ionicons
               name={focused ? "home" : "home-outline"}
+              size={24}
               color={color}
             />
           ),
         }}
       />
+
       <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "code-slash" : "code-slash-outline"}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="new-alumni"
+        name="new-alumni/index" // Corrected route name
         options={{
           title: "New Alumni",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? "person" : "people"} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="events"
-        options={{
-          title: "Events Gallery",
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "image" : "image-outline"}
+            <Ionicons
+              name={focused ? "person" : "person-outline"}
+              size={24}
               color={color}
             />
           ),
         }}
       />
+
       <Tabs.Screen
-        name="internship"
+        name="Groups"
         options={{
-          title: "Internships",
+          title: "Groups",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "briefcase" : "briefcase-outline"}
+            <Ionicons
+              name={focused ? "home" : "home-outline"}
+              size={24}
               color={color}
             />
           ),

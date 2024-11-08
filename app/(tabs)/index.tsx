@@ -12,9 +12,9 @@ import {
   StatusBar,
   SafeAreaView,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../types"; // Adjust the path as necessary
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Picker } from "@react-native-picker/picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
@@ -31,12 +31,21 @@ const ThemedText = ({ style, children, type }: any) => {
   return <Text style={[baseStyle, style]}>{children}</Text>;
 };
 
-const Navbar = () => (
+const Navbar = ({ onProfilePress }: any) => (
   <View style={styles.navbar}>
     <Image source={require("../../assets/kahelogo.png")} style={styles.logo} />
     <ThemedText style={styles.subtitle} type="subtitle">
-      Karpagam Alumni Portal
+      Alumni Portal
     </ThemedText>
+    <TouchableOpacity
+      onPress={onProfilePress}
+      style={styles.profileIconContainer}
+    >
+      <Image
+        source={{ uri: "https://via.placeholder.com/40x40.png?text=U" }}
+        style={styles.profileIcon}
+      />
+    </TouchableOpacity>
   </View>
 );
 
@@ -89,17 +98,17 @@ const EventCard = ({
     </TouchableOpacity>
   );
 };
-
 const InternshipCard = ({ title, company, details }: any) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate("internship-opportunities", {
+        navigation.navigate("internship-opportunities/index", {
           title,
           company,
           details,
-        } as never)
+        })
       }
     >
       <View style={styles.internshipCard}>
@@ -112,6 +121,7 @@ const InternshipCard = ({ title, company, details }: any) => {
     </TouchableOpacity>
   );
 };
+
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -127,17 +137,7 @@ export default function HomeScreen() {
     };
     checkToken();
   }, [navigation]);
-  const Navbar = () => (
-    <View style={styles.navbar}>
-      <Image
-        source={require("../../assets/kahelogo.png")}
-        style={styles.logo}
-      />
-      <ThemedText style={styles.subtitle} type="subtitle">
-        Karpagam Alumni Portal
-      </ThemedText>
-    </View>
-  );
+
   const upcomingEvents = [
     {
       id: "1",
@@ -217,7 +217,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safeArea}>
-        <Navbar />
+        <Navbar
+          onProfilePress={() => navigation.navigate("user-profile" as never)}
+        />
         <ScrollView
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
@@ -234,7 +236,6 @@ export default function HomeScreen() {
             style={styles.eventList}
           />
           {renderShowMoreButton("upcoming-events")}
-
           <ThemedText type="title" style={styles.sectionTitle}>
             Past Events
           </ThemedText>
@@ -310,7 +311,6 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    paddingTop: 20,
   },
   navbar: {
     flexDirection: "row",
@@ -322,6 +322,15 @@ const styles = StyleSheet.create({
     width: 140,
     height: 40,
     marginRight: 10,
+  },
+  profileIconContainer: {
+    marginLeft: "auto",
+  },
+  profileIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ddd",
   },
   contentContainer: {
     padding: 16,

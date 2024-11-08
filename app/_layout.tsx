@@ -48,11 +48,11 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         {!isLoggedIn ? (
-          <Stack.Screen name="login" />
+          <Stack.Screen name="login" options={{ headerShown: false }} />
         ) : (
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         )}
-        <Stack.Screen name="+not-found" />
+        <Stack.Screen name="+not-found" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );
